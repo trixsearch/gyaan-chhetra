@@ -15,3 +15,12 @@ class BorrowRecord(BaseModel):
             models.Index(fields=['due_date', 'is_overdue']),
             models.Index(fields=['book', 'returned_date']),
         ]
+
+        # Partial indexes for better performance
+        constraints = [
+            models.Index(
+                fields=['student'],
+                name='idx_active_borrows',
+                condition=models.Q(returned_date__isnull=True)
+            )
+        ]
