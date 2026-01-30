@@ -213,7 +213,7 @@ ASK before continuing.
 
 
 gyaan-chhetra/
-├── config/
+├── gyaan_chhetra/
 │   ├── __init__.py
 │   ├── settings.py
 │   ├── urls.py
@@ -224,7 +224,7 @@ gyaan-chhetra/
 │   ├── permissions.py      # Role-based permissions
 │   ├── utils.py           # Common utilities
 │   └── exceptions.py      # Custom exceptions
-├── auth/
+├── authentication/
 │   ├── __init__.py
 │   ├── models.py          # Custom User model
 │   ├── serializers.py     # Auth serializers

@@ -5,3 +5,5 @@ pymongo==4.6.1
 python-dotenv==1.0.0
 drf-yasg==1.21.7
 python-decouple==3.7
+setuptools
+django-environ
