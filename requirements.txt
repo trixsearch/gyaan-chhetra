@@ -1,0 +1,17 @@
+asgiref==3.11.0
+django==4.2.27
+djangorestframework==3.16.1
+djangorestframework-simplejwt==5.5.1
+dnspython==2.7.0
+drf-yasg==1.21.14
+inflection==0.5.1
+packaging==26.0
+pyjwt==2.11.0
+pymongo==4.16.0
+python-dotenv==1.2.1
+pytz==2025.2
+pyyaml==6.0.3
+sqlparse==0.5.5
+typing-extensions==4.15.0
+tzdata==2025.3
+uritemplate==4.2.0
