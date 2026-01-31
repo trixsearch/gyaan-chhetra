@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     
     'core',
     'permissions',
+    'books',
+    'issues',
     'rest_framework',
 ]
 
