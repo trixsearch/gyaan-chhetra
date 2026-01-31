@@ -8,6 +8,8 @@ from permissions.admin import IsAdmin
 from core.mongo import MongoDBClient
 from core.audit import update_audit_fields
 from .constants import IssueStatus
+from .penalty import calculate_penalty
+
 
 client = MongoDBClient.get_client()
 db = MongoDBClient.get_db()
@@ -151,3 +153,22 @@ class ReturnBooksAPIView(APIView):
             {"detail": "Books returned successfully"},
             status=status.HTTP_200_OK,
         )
+
+class BorrowerPenaltyAPIView(APIView):
+    permission_classes = [IsAdmin]
+
+    def get(self, request, borrower_uuid):
+        issues = list(
+            issues_col.find(
+                {"borrower_uuid": borrower_uuid}
+            )
+        )
+
+        total_penalty = sum(
+            calculate_penalty(issue) for issue in issues
+        )
+
+        return Response({
+            "borrower_uuid": borrower_uuid,
+            "total_penalty": total_penalty,
+        })
