@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'permissions',
     'books',
     'issues',
+    'drf_yasg',
     'rest_framework',
 ]
 
