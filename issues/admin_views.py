@@ -9,6 +9,8 @@ from core.mongo import MongoDBClient
 from core.audit import update_audit_fields
 from .constants import IssueStatus
 from .penalty import calculate_penalty
+from core.email import send_email
+
 
 
 client = MongoDBClient.get_client()
@@ -167,6 +169,26 @@ class BorrowerPenaltyAPIView(APIView):
         total_penalty = sum(
             calculate_penalty(issue) for issue in issues
         )
+        
+        # ============================================================
+        # NEW CODE STARTS HERE
+        # ============================================================
+        if total_penalty > 0:
+            try:
+                send_email(
+                    subject="Borrower Penalty Alert",
+                    message=(
+                        f"Borrower {borrower_uuid} "
+                        f"has an outstanding penalty of ₹{total_penalty}"
+                    ),
+                    recipient=request.user.email, # Sends alert to the Admin
+                )
+            except Exception as e:
+                # Log error so the API doesn't crash if email fails
+                print(f"Failed to send email: {e}")
+        # ============================================================
+        # NEW CODE ENDS HERE
+        # ============================================================
 
         return Response({
             "borrower_uuid": borrower_uuid,
