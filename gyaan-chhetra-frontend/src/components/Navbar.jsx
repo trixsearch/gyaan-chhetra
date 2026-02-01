@@ -1,4 +1,4 @@
-import { useTheme } from "../hooks/useTheme";
+import { useTheme } from "../theme/ThemeContext";
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
@@ -8,9 +8,7 @@ export default function Navbar() {
       <h2 style={styles.logo}>📚 Gyaan Chhetra</h2>
 
       <div style={styles.actions}>
-        <button className="btn" onClick={toggleTheme}>
-          {theme === "light" ? "🌙 Andhera" : "☀️ Ujala"}
-        </button>
+       <button onClick={toggleTheme}>🌓Roop</button>
       </div>
     </nav>
   );

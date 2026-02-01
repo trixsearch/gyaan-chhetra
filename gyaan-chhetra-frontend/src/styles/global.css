@@ -1,0 +1,44 @@
+/* RESET */
+* {
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* LIGHT THEME */
+body.light {
+  background: linear-gradient(120deg, #e0eafc, #cfdef3);
+  color: #111;
+}
+
+/* DARK THEME */
+body.dark {
+  background: linear-gradient(120deg, #0f2027, #203a43, #2c5364);
+  color: #f5f5f5;
+}
+
+/* GLASS CARD */
+.glass {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+/* DARK GLASS */
+body.dark .glass {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+/* BUTTONS */
+button {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}

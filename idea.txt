@@ -442,3 +442,20 @@ src/
 ├── utils/
 ├── App.jsx
 └── main.jsx
+
+
+
+src/
+├── pages/
+│   ├── admin/
+│   │   ├── AdminDashboard.jsx
+│   │   ├── ManageBooks.jsx
+│   │   └── ManageBorrowers.jsx
+│   ├── borrower/
+│   │   ├── BorrowerDashboard.jsx
+│   │   └── MyBooks.jsx
+│
+├── components/
+│   ├── BookTable.jsx
+│   ├── SearchBar.jsx
+│   └── Pagination.jsx

@@ -1,24 +1,27 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 
-export const AuthContext = createContext();
+export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(
-    localStorage.getItem("token")
-  );
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem("token") || null;
+  });
 
-  useEffect(() => {
-    if (token) {
-      setUser(JSON.parse(localStorage.getItem("user")));
+  const [user, setUser] = useState(() => {
+    try {
+      const raw = localStorage.getItem("user");
+      if (!raw || raw === "undefined") return null;
+      return JSON.parse(raw);
+    } catch {
+      return null;
     }
-  }, [token]);
+  });
 
-  const login = (token, user) => {
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(user));
-    setToken(token);
-    setUser(user);
+  const login = (accessToken, userData) => {
+    localStorage.setItem("token", accessToken);
+    localStorage.setItem("user", JSON.stringify(userData));
+    setToken(accessToken);
+    setUser(userData);
   };
 
   const logout = () => {
@@ -29,7 +32,13 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, token, login, logout, isAuth: !!token }}
+      value={{
+        user,
+        token,
+        login,
+        logout,
+        isAuth: !!token,
+      }}
     >
       {children}
     </AuthContext.Provider>

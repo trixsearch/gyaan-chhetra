@@ -1,0 +1,39 @@
+.app-shell {
+    min-height: 100vh;
+  }
+  
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 24px;
+    margin: 16px;
+    border-radius: 14px;
+  }
+  
+  .nav-links {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  
+  .nav-links a {
+    text-decoration: none;
+    color: inherit;
+    font-weight: 500;
+  }
+  
+  .nav-links a.active {
+    border-bottom: 2px solid currentColor;
+  }
+  
+  .page {
+    padding: 24px;
+  }
+  
+  .nav-links button {
+    background: transparent;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  

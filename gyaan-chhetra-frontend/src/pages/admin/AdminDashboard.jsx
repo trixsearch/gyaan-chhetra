@@ -1,14 +1,41 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import api from "../../api/axios";
+import { toast } from "react-toastify";
+import BookForm from "../../components/BookForm.jsx";
+import BookList from "../../components/BookList.jsx";
 
-export default function AdminDashboard() {
+const AdminDashboard = () => {
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchBooks = async () => {
+    try {
+      const res = await api.get("/admin/books/");
+      setBooks(res.data.results || res.data);
+    } catch {
+      toast.error("Failed to load books");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBooks();
+  }, []);
+
   return (
-    <div className="glass" style={{ padding: "2rem" }}>
-      <h2>Admin Dashboard</h2>
+    <>
+      <h2>📚 Book Management</h2>
 
-      <ul style={{ marginTop: "1rem", lineHeight: 2 }}>
-        <li><Link to="/admin/books">Manage Books</Link></li>
-        <li><Link to="/admin/borrowers">Manage Borrowers</Link></li>
-      </ul>
-    </div>
+      <BookForm onSuccess={fetchBooks} />
+
+      <BookList
+        books={books}
+        loading={loading}
+        onDelete={fetchBooks}
+      />
+    </>
   );
-}
+};
+
+export default AdminDashboard;

@@ -1,41 +1,95 @@
-import { useState } from "react";
-import api from "../api/axios";
-import { useAuth } from "../auth/useAuth";
+import { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import api from "../api/axios";
+import { AuthContext } from "../auth/AuthContext";
+import "./Login.css";
 
-export default function Login() {
-  const { login } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const Login = () => {
+  const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
-  const submit = async e => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    role: "ADMIN",
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await api.post("/accounts/login/", {
-      email,
-      password,
-    });
 
-    login(res.data.access, res.data.user);
-    toast.success("Logged in");
+    try {
+      setLoading(true);
+
+      const res = await api.post("/accounts/login/", formData);
+
+      // ✅ FIX START: Explicitly save tokens for the Interceptor
+      // The interceptor in api/axios.js looks specifically for "access"
+      localStorage.setItem("access", res.data.access);
+      localStorage.setItem("refresh", res.data.refresh);
+      // ✅ FIX END
+
+      // Update the global Auth Context state
+      login(res.data.access, res.data.user);
+
+      toast.success("Login successful");
+
+      if (res.data.user.role === "ADMIN") {
+        navigate("/admin");
+      } else {
+        navigate("/borrower");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Login failed. Please check your credentials.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <form className="glass" style={styles.form} onSubmit={submit}>
-      <h2>Login</h2>
-      <input placeholder="Email" onChange={e => setEmail(e.target.value)} />
-      <input type="password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
-      <button className="btn">Login</button>
-    </form>
-  );
-}
+    <div className="login-container">
+      <form onSubmit={handleSubmit} className="glass-card">
+        <h2>Login</h2>
 
-const styles = {
-  form: {
-    maxWidth: 350,
-    margin: "6rem auto",
-    padding: "2rem",
-    display: "flex",
-    flexDirection: "column",
-    gap: "1rem",
-  },
+        <input
+          type="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={(e) =>
+            setFormData({ ...formData, email: e.target.value })
+          }
+          required
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={(e) =>
+            setFormData({ ...formData, password: e.target.value })
+          }
+          required
+        />
+
+        <select
+          value={formData.role}
+          onChange={(e) =>
+            setFormData({ ...formData, role: e.target.value })
+          }
+        >
+          <option value="ADMIN">Admin</option>
+          <option value="BORROWER">Borrower</option>
+        </select>
+
+        <button type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
+      </form>
+    </div>
+  );
 };
+
+export default Login;

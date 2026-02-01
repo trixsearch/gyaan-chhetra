@@ -1,46 +1,62 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import Login from "./pages/Login";
 import MainLayout from "./layout/MainLayout";
 import ProtectedRoute from "./auth/ProtectedRoute";
-
-// ✅ Import your new Dashboard pages
-// (Make sure you create these files in src/pages/ if they don't exist yet!)
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import BorrowerDashboard from "./pages/borrower/BorrowerDashboard";
 
+const pageVariants = {
+  initial: { opacity: 0, y: 10 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -10 },
+};
+
 export default function App() {
+  const location = useLocation();
+
   return (
-    <Routes>
-      {/* Public Route */}
-      <Route path="/login" element={<Login />} />
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Navigate to="/login" />} />
 
-      {/* Redirect root "/" to login or a specific dashboard */}
-      <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute role="ADMIN">
+              <MainLayout>
+                <motion.div
+                  variants={pageVariants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                >
+                  <AdminDashboard />
+                </motion.div>
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
 
-      {/* 🛡️ ADMIN ROUTE */}
-      <Route
-        path="/admin"
-        element={
-          <ProtectedRoute role="ADMIN">
-            <MainLayout>
-              <AdminDashboard />
-            </MainLayout>
-          </ProtectedRoute>
-        }
-      />
-
-      {/* 🛡️ BORROWER ROUTE */}
-      <Route
-        path="/borrower"
-        element={
-          <ProtectedRoute role="BORROWER">
-            <MainLayout>
-              <BorrowerDashboard />
-            </MainLayout>
-          </ProtectedRoute>
-        }
-      />
-    </Routes>
+        <Route
+          path="/borrower"
+          element={
+            <ProtectedRoute role="BORROWER">
+              <MainLayout>
+                <motion.div
+                  variants={pageVariants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                >
+                  <BorrowerDashboard />
+                </motion.div>
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </AnimatePresence>
   );
 }
