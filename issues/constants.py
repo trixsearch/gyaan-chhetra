@@ -1,4 +1,0 @@
-class IssueStatus:
-    REQUESTED = "REQUESTED"
-    ISSUED = "ISSUED"
-    RETURNED = "RETURNED"
