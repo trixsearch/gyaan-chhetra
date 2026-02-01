@@ -6,8 +6,8 @@ import ProtectedRoute from "./auth/ProtectedRoute";
 
 // ✅ Import your new Dashboard pages
 // (Make sure you create these files in src/pages/ if they don't exist yet!)
-import AdminDashboard from "./pages/AdminDashboard";
-import BorrowerDashboard from "./pages/BorrowerDashboard";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import BorrowerDashboard from "./pages/borrower/BorrowerDashboard";
 
 export default function App() {
   return (
