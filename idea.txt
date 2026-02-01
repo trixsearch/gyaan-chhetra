@@ -246,7 +246,7 @@ gyaan-chhetra/
 You are a senior frontend engineer and an excellent React mentor,
 focused on building clean, minimal, production-ready UIs.
 
-I want you to build the FRONTEND of a Library Management System
+I want you to build the FRONTEND for the same Library Management System, whose backend you just write
 named **"gyaan-chhetra"** using ONLY the following stack:
 
 - React
@@ -424,3 +424,21 @@ After finishing the step:
 ASK before continuing.
 
 ❗ Always provide FULL & FINAL code for each step.
+
+
+src/
+├── api/
+├── auth/
+├── theme/
+├── layout/
+├── components/
+├── pages/
+│   ├── auth/
+│   ├── admin/
+│   └── borrower/
+├── hooks/
+├── routes/
+├── styles/
+├── utils/
+├── App.jsx
+└── main.jsx
