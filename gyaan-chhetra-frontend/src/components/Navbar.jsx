@@ -1,33 +1,61 @@
+import { NavLink, useNavigate } from "react-router-dom";
 import { useTheme } from "../theme/ThemeContext";
+import { useContext } from "react";
+import { AuthContext } from "../auth/AuthContext";
+import "./Navbar.css"; // Ensure you create this file
 
 export default function Navbar() {
-  const { theme, toggleTheme } = useTheme();
+  const { toggleTheme, theme } = useTheme();
+  const { logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
-    <nav className="glass" style={styles.nav}>
-      <h2 style={styles.logo}>📚 Gyaan Chhetra</h2>
+    <nav className="navbar glass">
+      <div className="brand">
+        <span className="logo">📚</span>
+        <h1>Gyaan Chhetra</h1>
+      </div>
 
-      <div style={styles.actions}>
-       <button onClick={toggleTheme}>🌓Roop</button>
+      <div className="nav-links">
+        <NavLink
+          to="/admin"
+          end
+          className={({ isActive }) => (isActive ? "active" : "")}
+        >
+          Dashboard
+        </NavLink>
+        <NavLink
+          to="/admin/borrowers"
+          className={({ isActive }) => (isActive ? "active" : "")}
+        >
+          Borrowers
+        </NavLink>
+        <NavLink
+          to="/admin/penalties"
+          className={({ isActive }) => (isActive ? "active" : "")}
+        >
+          Penalties
+        </NavLink>
+        <NavLink to="/admin/borrowers/add">Add Borrower</NavLink>
+      </div>
+
+      <div className="nav-actions">
+        <button
+          className="theme-toggle"
+          onClick={toggleTheme}
+          title="Toggle Theme"
+        >
+          {theme === "light" ? "🌙" : "☀️"}
+        </button>
+        <button className="logout-btn" onClick={handleLogout}>
+          Logout
+        </button>
       </div>
     </nav>
   );
 }
-
-const styles = {
-  nav: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "1rem 1.5rem",
-    marginBottom: "2rem",
-  },
-  logo: {
-    fontSize: "1.2rem",
-    fontWeight: 600,
-  },
-  actions: {
-    display: "flex",
-    gap: "1rem",
-  },
-};

@@ -1,39 +1,288 @@
-.app-shell {
-    min-height: 100vh;
+/* =========================================
+   1. CSS VARIABLES (Theme Colors)
+   ========================================= */
+   :root {
+    --bg-color: #0f172a;       /* Dark Blue/Black Background */
+    --sidebar-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-color: #3b82f6;   /* Bright Blue */
+    --accent-hover: rgba(59, 130, 246, 0.2);
+    --danger-color: #ef4444;
   }
   
-  .navbar {
-    display: flex;
-    justify-content: space-between;
-    padding: 16px 24px;
-    margin: 16px;
-    border-radius: 14px;
+  /* Light Mode Overrides */
+  body.light-theme {
+    --bg-color: #f1f5f9;
+    --sidebar-bg: rgba(255, 255, 255, 0.8);
+    --glass-border: rgba(0, 0, 0, 0.1);
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --accent-hover: rgba(59, 130, 246, 0.1);
   }
   
-  .nav-links {
+  /* =========================================
+     2. MAIN LAYOUT STRUCTURE
+     ========================================= */
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .app-shell {
     display: flex;
-    gap: 16px;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+  }
+  
+  /* =========================================
+     3. COLLAPSIBLE SIDEBAR STYLING
+     ========================================= */
+  .sidebar {
+    /* Default Expanded Width */
+    width: 260px;
+    min-width: 260px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    border-right: 1px solid var(--glass-border);
+    background: var(--sidebar-bg);
+    backdrop-filter: blur(12px);
+    position: relative;
+    z-index: 10;
+    
+    /* Smooth Animation for Collapse */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* 🎯 Collapsed State */
+  .sidebar.collapsed {
+    width: 80px;
+    min-width: 80px;
+    padding: 24px 12px; /* Reduce padding */
     align-items: center;
   }
   
-  .nav-links a {
-    text-decoration: none;
-    color: inherit;
-    font-weight: 500;
+  /* Sidebar Header */
+  .sidebar-header {
+    height: 40px;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Hide text if it overflows */
   }
   
-  .nav-links a.active {
-    border-bottom: 2px solid currentColor;
+  .sidebar h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    white-space: nowrap;
   }
   
-  .page {
-    padding: 24px;
-  }
-  
-  .nav-links button {
-    background: transparent;
+  /* Toggle Button (The Arrow) */
+  .sidebar-toggle {
+    position: absolute;
+    right: -12px;
+    top: 36px;
+    background: var(--accent-color);
+    color: white;
     border: none;
-    font-size: 1rem;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 20;
+    font-size: 12px;
+    transition: transform 0.2s;
   }
   
+  .sidebar-toggle:hover {
+    transform: scale(1.15);
+  }
+  
+  /* =========================================
+     4. NAVIGATION LINKS
+     ========================================= */
+  .sidebar-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-grow: 1;
+    width: 100%;
+  }
+  
+  .sidebar-links a {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 12px;
+    transition: all 0.2s ease-in-out;
+    height: 48px; /* Fixed height helps animation */
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  
+  /* Icon Container */
+  .icon {
+    font-size: 1.25rem;
+    min-width: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Text Container */
+  .link-text {
+    margin-left: 12px;
+    opacity: 1;
+    transition: opacity 0.2s;
+  }
+  
+  /* Hover State */
+  .sidebar-links a:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    transform: translateX(4px);
+  }
+  
+  /* Active State */
+  .sidebar-links a.active {
+    background: var(--accent-hover);
+    color: var(--accent-color);
+    font-weight: 600;
+    border-left: 3px solid var(--accent-color);
+  }
+  
+  /* 🎯 Collapsed Adjustments */
+  .sidebar.collapsed .sidebar-links a {
+    justify-content: center;
+    padding: 12px; /* Remove horizontal padding */
+  }
+  
+  .sidebar.collapsed .sidebar-links a:hover {
+    transform: none; /* No movement when collapsed */
+  }
+  
+  .sidebar.collapsed .sidebar-links a.active {
+    border-left: none; /* Remove border */
+    border-radius: 12px; /* Full rounded */
+  }
+  
+  /* =========================================
+     5. CONTENT AREA & NAVBAR
+     ========================================= */
+  .content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .top-nav {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    border-bottom: 1px solid var(--glass-border);
+    background: rgba(15, 23, 42, 0.3);
+    backdrop-filter: blur(10px);
+  }
+  
+  .user-info {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+  }
+  
+  .user-info strong {
+    color: var(--text-primary);
+  }
+  
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .logout-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--danger-color);
+    background: rgba(239, 68, 68, 0.1);
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  
+  .logout-btn:hover {
+    background: var(--danger-color);
+    color: white;
+  }
+  
+  /* =========================================
+     6. PAGE CONTENT & UTILITIES
+     ========================================= */
+  .page-content {
+    flex: 1;
+    padding: 32px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+  }
+  
+  .glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Sidebar Footer (Theme Button) */
+  .sidebar-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--glass-border);
+    display: flex;
+    justify-content: center;
+  }
+  
+  .theme-btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.2s;
+  }
+  
+  .theme-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  /* Hide text on collapse in footer */
+  .sidebar.collapsed .theme-btn {
+    font-size: 1.2rem;
+    padding: 8px 0;
+  }

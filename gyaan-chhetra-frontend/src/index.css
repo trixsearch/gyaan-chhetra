@@ -62,3 +62,14 @@
     padding: 1.5rem;
   }
   
+
+  .dark {
+    background: #0f172a;
+    color: #e5e7eb;
+  }
+  
+  .light {
+    background: #f8fafc;
+    color: #0f172a;
+  }
+  

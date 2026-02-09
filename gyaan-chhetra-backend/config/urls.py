@@ -42,4 +42,6 @@ urlpatterns = [
     path("api/v1/admin/issues/", include("issues.admin_urls")),
     path("api/v1/books/", include("books.urls")),
     path("api/docs/",schema_view.with_ui("swagger", cache_timeout=0),name="swagger-docs",),
+    path("api/v1/admin/penalties/", include("penalties.admin_urls")),
+    path("api/v1/", include("core.urls")),
 ]

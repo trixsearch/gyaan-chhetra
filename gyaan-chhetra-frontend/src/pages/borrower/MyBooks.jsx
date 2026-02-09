@@ -2,20 +2,22 @@ import { useEffect, useState } from "react";
 import api from "../../api/axios";
 
 export default function MyBooks() {
-  const [issues, setIssues] = useState([]);
+  const [books, setBooks] = useState([]);
 
   useEffect(() => {
     api.get("/borrower/issues/")
-      .then(res => setIssues(res.data));
+      .then((res) => setBooks(res.data))
   }, []);
 
   return (
-    <div className="glass" style={{ padding: "2rem" }}>
-      <h3>My Issued Books</h3>
+    <div className="glass-card">
+      <h2>📖 Meri Issued Books</h2>
 
-      {issues.map(i => (
-        <div key={i.uuid}>
-          {i.book_title} – Due: {i.due_date}
+      {books.length === 0 && <p>No books issued</p>}
+
+      {books.map((b) => (
+        <div key={b.issue_uuid}>
+          {b.book_title} – Due: {b.due_date}
         </div>
       ))}
     </div>

@@ -1,69 +1,43 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
-import { toast } from "react-toastify";
 
 const BorrowerBooks = () => {
   const [books, setBooks] = useState([]);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
-    fetchBooks();
-  }, []);
-
-  const fetchBooks = async () => {
-    try {
-      const res = await api.get("/books/");
-      setBooks(res.data);
-    } catch {
-      toast.error("Failed to load books");
-    }
-  };
+    api
+      .get(`/books/?page=${page}&search=${search}`)
+      .then((res) => setBooks(res.data.results || res.data));
+  }, [page, search]);
 
   return (
     <div>
-      <h2>📚 Available Books</h2>
+      <h2>📚 Browse Books</h2>
 
-      <table width="100%">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Writer</th>
-            <th>Available</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {books.map((b) => (
-            <tr key={b.uuid}>
-              <td>{b.title}</td>
-              <td>{b.writer}</td>
-              <td>{b.available_quantity}</td>
-              <td>
-                <BorrowButton book={b} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <input
+        placeholder="Search book..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        style={{ marginBottom: "1rem" }}
+      />
+
+      {books.map((book) => (
+        <div key={book.uuid} className="glass-card">
+          <b>{book.title}</b>
+          <p>Available: {book.available_quantity}</p>
+        </div>
+      ))}
+
+      <div style={{ marginTop: "1rem" }}>
+        <button onClick={() => setPage((p) => Math.max(p - 1, 1))}>
+          Prev
+        </button>
+        <span style={{ margin: "0 1rem" }}>Page {page}</span>
+        <button onClick={() => setPage((p) => p + 1)}>Next</button>
+      </div>
     </div>
-  );
-};
-
-const BorrowButton = ({ book }) => {
-  const handleBorrow = async () => {
-    try {
-      await api.post("/borrower/issues/", {
-        book_uuid: book.uuid,
-      });
-      toast.success("Book borrowed");
-    } catch {
-      toast.error("Borrow failed");
-    }
-  };
-
-  return (
-    <button disabled={book.available_quantity < 1} onClick={handleBorrow}>
-      Borrow
-    </button>
   );
 };
 
