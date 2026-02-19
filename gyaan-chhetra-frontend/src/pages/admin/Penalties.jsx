@@ -1,47 +1,41 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
-import { toast } from "react-toastify";
 
-export default function AdminPenalties() {
+export default function Penalties() {
   const [penalties, setPenalties] = useState([]);
 
   useEffect(() => {
-    load();
+    api.get("/admin/penalties/")
+      .then(res => setPenalties(res.data))
+      .catch(() => console.error("Failed to load penalties"));
   }, []);
-
-  const load = async () => {
-    try {
-      const res = await api.get("/admin/penalties/");
-      setPenalties(res.data);
-    } catch {
-      toast.error("Failed to load penalties");
-    }
-  };
 
   return (
     <div>
-      <h2>💰 Penalties</h2>
+      <h2>💸 Penalties</h2>
 
-      <table>
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Book</th>
-            <th>Amount</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {penalties.map(p => (
-            <tr key={p.uuid}>
-              <td>{p.user.email}</td>
-              <td>{p.book.title}</td>
-              <td>₹{p.amount}</td>
-              <td>{p.is_paid ? "Paid" : "Unpaid"}</td>
+      {penalties.length === 0 ? (
+        <p>No penalties</p>
+      ) : (
+        <table className="glass">
+          <thead>
+            <tr>
+              <th>Borrower</th>
+              <th>Amount</th>
+              <th>Status</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {penalties.map(p => (
+              <tr key={p.id}>
+                <td>{p.issue.borrower_email}</td>
+                <td>₹{p.amount}</td>
+                <td>{p.status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }

@@ -1,18 +1,14 @@
 import uuid
 from django.db import models
+from django.utils.timezone import now
 from accounts.models import User
 from books.models import Book
 
 
 class Issue(models.Model):
-    """
-    Book issue lifecycle:
-    ISSUED → RETURNED → (optional) PENALIZED
-    """
     STATUS_CHOICES = (
         ("ISSUED", "Issued"),
         ("RETURNED", "Returned"),
-        ("OVERDUE", "Overdue"),
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -44,6 +40,9 @@ class Issue(models.Model):
 
     class Meta:
         ordering = ["-issued_at"]
+
+    def is_overdue(self):
+        return self.status == "ISSUED" and now() > self.due_date
 
     def __str__(self):
         return f"{self.book.title} → {self.borrower.email}"

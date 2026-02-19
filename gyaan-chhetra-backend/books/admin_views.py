@@ -1,6 +1,10 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+import csv
+from django.http import HttpResponse
+from permissions.admin import IsAdmin
+from core.mongo import MongoDBClient
 
 from permissions.admin import IsAdmin
 from .serializers import BookCreateUpdateSerializer
@@ -11,6 +15,8 @@ from .repository import (
     list_books,
 )
 
+db = MongoDBClient.get_db()
+books_col = db["books"]
 
 class AdminBookAPIView(APIView):
     permission_classes = [IsAdmin]
@@ -51,3 +57,25 @@ class AdminBookDetailAPIView(APIView):
         if not deleted:
             return Response({"detail": "Book not found"}, status=404)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class ExportBooksCSVAPIView(APIView):
+    permission_classes = [IsAdmin]
+
+    def get(self, request):
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="books.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow(["Title", "Writer", "Total Quantity", "Available Quantity"])
+
+        books = books_col.find({})
+
+        for book in books:
+            writer.writerow([
+                book.get("title"),
+                book.get("writer"),
+                book.get("quantity"),
+                book.get("available_quantity"),
+            ])
+
+        return response

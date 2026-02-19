@@ -194,3 +194,26 @@ class BorrowerPenaltyAPIView(APIView):
             "borrower_uuid": borrower_uuid,
             "total_penalty": total_penalty,
         })
+    
+
+class RecentIssuesAPIView(APIView):
+    permission_classes = [IsAdmin]
+
+    def get(self, request):
+        issues = list(
+            issues_col.find({})
+            .sort("created_at", -1)
+            .limit(5)
+        )
+
+        response = []
+        for issue in issues:
+            book = books_col.find_one({"uuid": issue["book_uuid"]})
+            response.append({
+                "uuid": issue.get("uuid"),
+                "book_title": book["title"] if book else "Unknown",
+                "borrower_email": issue.get("borrower_uuid"),
+                "status": issue.get("status"),
+            })
+
+        return Response(response)

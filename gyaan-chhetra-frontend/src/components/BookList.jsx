@@ -24,12 +24,47 @@ const BookList = ({ books, loading, onDelete }) => {
 
   return (
     <div>
-      {books.map(book => (
-        <div key={book.uuid} className="glass" style={{ padding: 12, marginTop: 8 }}>
-          <strong>{book.title}</strong> — {book.writer}
-          <br />
-          Qty: {book.quantity}
-          <button onClick={() => remove(book.uuid)}>❌</button>
+      {books.map((book) => (
+        <div
+          key={book.uuid}
+          className="glass"
+          style={{
+            padding: 16,
+            marginTop: 10,
+            border:
+              book.available_quantity === 0
+                ? "1px solid red"
+                : "1px solid #e0e0e0",
+            background:
+              book.available_quantity === 0
+                ? "#ffe5e5"
+                : "#fafafa",
+            borderRadius: "8px",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div>
+              <strong>{book.title}</strong> — {book.writer}
+              <br />
+              Total Qty: {book.quantity}
+              <br />
+              Available: {book.available_quantity}
+            </div>
+
+            <button
+              onClick={() => remove(book.uuid)}
+              style={{
+                background: "red",
+                color: "white",
+                border: "none",
+                padding: "6px 10px",
+                borderRadius: "6px",
+                cursor: "pointer",
+              }}
+            >
+              ❌ Delete
+            </button>
+          </div>
         </div>
       ))}
     </div>

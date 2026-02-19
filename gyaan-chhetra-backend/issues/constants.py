@@ -2,3 +2,6 @@ class IssueStatus:
     REQUESTED = "REQUESTED"
     ISSUED = "ISSUED"
     RETURNED = "RETURNED"
+    OVERDUE = "OVERDUE"
+
+MAX_BORROW_LIMIT = 5

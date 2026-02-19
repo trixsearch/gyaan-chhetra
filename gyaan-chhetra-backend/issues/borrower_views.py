@@ -9,6 +9,10 @@ from .serializers import BorrowRequestSerializer
 from .penalty import calculate_penalty
 from core.email import send_email
 from datetime import datetime, timezone
+from .constants import MAX_BORROW_LIMIT, IssueStatus
+from .tasks import update_overdue_issues
+
+
 
 
 
@@ -26,12 +30,26 @@ class BorrowRequestAPIView(APIView):
 
         borrower_uuid = str(request.user.id)
 
+        # 🔥 Count current active issues
+        active_count = issues_collection.count_documents({
+            "borrower_uuid": borrower_uuid,
+            "status": {"$in": [IssueStatus.REQUESTED, IssueStatus.ISSUED]}
+        })
+
+        requested_count = len(serializer.validated_data["book_uuids"])
+
+        if active_count + requested_count > MAX_BORROW_LIMIT:
+            return Response(
+                {"detail": f"Borrow limit exceeded. Max {MAX_BORROW_LIMIT} books allowed."},
+                status=400
+            )
+
         records = []
         for book_uuid in serializer.validated_data["book_uuids"]:
             record = {
                 "borrower_uuid": borrower_uuid,
                 "book_uuid": book_uuid,
-                "status": "REQUESTED",
+                "status": IssueStatus.REQUESTED,
                 "issue_date": None,
                 "due_date": None,
                 "return_date": None,
@@ -46,11 +64,11 @@ class BorrowRequestAPIView(APIView):
             status=status.HTTP_201_CREATED,
         )
 
-
 class MyIssuedBooksAPIView(APIView):
     permission_classes = [IsAuthenticated, IsBorrower]
 
     def get(self, request):
+        update_overdue_issues()
         borrower_uuid = str(request.user.id)
 
         # Corrected variable name from issues_col to issues_collection
